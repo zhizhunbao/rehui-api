@@ -28,3 +28,23 @@ def get_top_rank(
 @app.get("/")
 def default_top10():
     return rank_service.get_top_rank(limit=10, city=None, make=None)
+
+if __name__ == "__main__":
+    import uvicorn
+    import webbrowser
+    import threading
+    import time
+
+    def open_browser():
+        time.sleep(1)  # 等待服务启动
+        webbrowser.open("http://127.0.0.1:8000/docs")  # 也可换成 /api/rank/top
+
+    threading.Thread(target=open_browser).start()
+
+    uvicorn.run(
+        "api.main_weapp_api:app",  # 按实际模块路径改
+        host="0.0.0.0",
+        port=8000,
+        reload=True
+    )
+

@@ -6,27 +6,32 @@ class RankService(BaseService):
     """
     榜单服务：从 dws_rehui_rank_cargurus 表中获取 rehui_score 排名前 N 的车辆
     """
-
     def get_top_rank(self, limit: int = 5, city: str = None, make: str = None) -> dict:
         trace_id = self.get_trace_id()
         limit = self.validate_limit(limit)
 
-        sql = """
-              SELECT listing_id, title, make, model, trim, year, city, rehui_score
-              FROM dws_rehui_rank_cargurus
-              WHERE 1=1 \
-              """
+        conditions = []
         params = {}
 
         if city:
-            sql += " AND city = :city"
+            conditions.append("city = :city")
             params["city"] = city
         if make:
-            sql += " AND make = :make"
+            conditions.append("make = :make")
             params["make"] = make
 
-        sql += " ORDER BY rehui_score DESC LIMIT :limit"
-        params["limit"] = limit
+        where_clause = " AND ".join(conditions)
+        if not where_clause:
+            where_clause = "1=1"
+
+        # ✅ 关键点：LIMIT 必须拼接（PostgreSQL 不支持参数绑定的 LIMIT）
+        sql = f"""
+            SELECT listing_id, title, make, model, trim, year, city, rehui_score
+            FROM dws_rehui_rank_cargurus
+            WHERE {where_clause}
+            ORDER BY rehui_score DESC
+            LIMIT {limit}
+        """
 
         try:
             self.logger.info(f"[{trace_id}] 📊 查询榜单 city={city}, make={make}, limit={limit}")
@@ -37,3 +42,4 @@ class RankService(BaseService):
         except Exception as e:
             self.logger.error(f"[{trace_id}] ❌ 查询失败: {e}", exc_info=True)
             return self.error("查询失败，请稍后再试", code=500)
+
