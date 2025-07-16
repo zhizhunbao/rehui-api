@@ -1,10 +1,7 @@
 import json
-import shutil
-import subprocess
 import os
 import sys
 import webbrowser
-from pathlib import Path
 
 import requests
 from dotenv import load_dotenv
@@ -63,7 +60,7 @@ def open_render_page():
     webbrowser.open("https://dashboard.render.com/new/web")
     print("✅ 完成！点击仓库一键部署 rehui-api 即可 🎉")
 
-import os
+
 import shutil
 from pathlib import Path
 import subprocess
@@ -98,7 +95,7 @@ if __name__ == "__main__":
 
     initialize_git()
     # create_repo_if_not_exists(token)
-    fix_scripts_dir_only()
+    # fix_scripts_dir_only()
     push_to_github()
 
     # open_render_page()

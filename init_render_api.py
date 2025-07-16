@@ -44,11 +44,6 @@ if __name__ == "__main__":
     uvicorn.run("api.main_weapp_api:app", host="0.0.0.0", port=8000)
 ''')
 
-#     (project_dir / "start.sh").write_text('''\
-# #!/usr/bin/env bash
-# uvicorn api.main_weapp_api:app --host 0.0.0.0 --port 8000
-# ''')
-
     (project_dir / "requirements.txt").write_text('''\
 fastapi
 uvicorn
