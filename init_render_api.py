@@ -182,13 +182,22 @@ def clean_git_history_and_protect_env():
 def clean_git_history_remove_db_safely():
     target_dir = Path("db")
     backup_dir = Path("db_backup")
+    exclude_subdirs = ["postgres_tools"]  # ✅ 忽略不备份的子目录
 
-    # ✅ 1. 备份本地 db/ 目录
+    # ✅ 1. 只备份需要的文件和子目录
     if target_dir.exists():
-        print("📦 备份本地 db/ → db_backup/")
+        print("📦 备份 db/ → db_backup/（排除 postgres_tools）")
         if backup_dir.exists():
             shutil.rmtree(backup_dir)
-        shutil.copytree(target_dir, backup_dir)
+        backup_dir.mkdir(parents=True)
+        for item in target_dir.iterdir():
+            if item.name in exclude_subdirs:
+                continue
+            dest = backup_dir / item.name
+            if item.is_dir():
+                shutil.copytree(item, dest)
+            else:
+                shutil.copy2(item, dest)
     else:
         print("⚠️ 未发现 db/ 目录，无需备份")
 
