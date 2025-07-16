@@ -3,7 +3,7 @@ services:
     name: rehui-api
     env: python
     buildCommand: ""
-    startCommand: bash start.sh
+    startCommand: python start_render.sh
     plan: free
     branch: main
     autoDeploy: true
