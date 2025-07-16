@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import subprocess
 import sys
 import webbrowser
@@ -139,6 +140,45 @@ def open_render_page():
     webbrowser.open("https://dashboard.render.com/new/web")
     print("✅ 完成！点击仓库一键部署 rehui-api 即可 🎉")
 
+def clean_git_history_and_protect_env():
+    print("🧹 清理 Git 历史中泄露的 .env 文件 ...")
+
+    # 删除历史缓存防止 not a fresh clone 错误
+    git_dir = Path(".git")
+    for subdir in ["refs/original", "logs"]:
+        path = git_dir / subdir
+        if path.exists():
+            print(f"🗑️ 删除旧元数据：{path}")
+            shutil.rmtree(path)
+
+    # 执行 git-filter-repo 清理 .env
+    result = subprocess.run([
+        "git", "filter-repo",
+        "--path", ".env",
+        "--invert-paths",
+        "--force"
+    ])
+    if result.returncode != 0:
+        print("❌ git-filter-repo 清理失败，请确保已安装 pip install git-filter-repo")
+        sys.exit(1)
+
+    # 添加 .env 到 .gitignore
+    gitignore_path = Path(".gitignore")
+    if not gitignore_path.exists():
+        gitignore_path.write_text(".env\n")
+    else:
+        lines = gitignore_path.read_text().splitlines()
+        if ".env" not in lines:
+            lines.append(".env")
+            gitignore_path.write_text("\n".join(lines) + "\n")
+            print("📛 已将 .env 添加到 .gitignore")
+
+    # 重新提交并强推
+    subprocess.run(["git", "add", ".gitignore"])
+    subprocess.run(["git", "commit", "-m", "🔒 remove .env and add to .gitignore"])
+    subprocess.run(["git", "push", "-f", "origin", "main"])
+    print("✅ 历史清理完成并强制推送成功")
+
 def main():
     project_dir = Path(".")
     install_dependencies()
@@ -148,6 +188,7 @@ def main():
     create_repo_if_not_exists(token)
     push_to_github()
     open_render_page()
+    clean_git_history_and_protect_env()
 
 if __name__ == "__main__":
     main()
