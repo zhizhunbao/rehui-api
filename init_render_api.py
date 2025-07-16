@@ -87,7 +87,7 @@ config/.env
 .venv/
 .idea/
 scripts/setup_env_and_deps.py
-db/postgres_tools
+db
 ''')
 
     print("✅ 项目结构已创建。")
