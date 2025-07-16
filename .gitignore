@@ -1,6 +1,6 @@
 __pycache__/
 *.pyc
-.env
+config/.env
 .venv/
 .idea/
-setup_env_and_deps.py
+scripts/setup_env_and_deps.py

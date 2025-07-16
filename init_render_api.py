@@ -83,10 +83,10 @@ services:
     (project_dir / ".gitignore").write_text('''\
 __pycache__/
 *.pyc
-.env
+config/.env
 .venv/
 .idea/
-setup_env_and_deps.py
+scripts/setup_env_and_deps.py
 ''')
 
     print("✅ 项目结构已创建。")
