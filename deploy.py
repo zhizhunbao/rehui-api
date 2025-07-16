@@ -86,6 +86,27 @@ def fix_scripts_dir_only():
 
     print("✅ scripts 目录已完成重建")
 
+import subprocess
+
+def remove_from_github_only(paths):
+    """
+    只从 GitHub 上删除指定文件或目录，不删除本地数据
+    :param paths: 要删除的路径列表，例如 ["scripts", "README.md"]
+    """
+    for path in paths:
+        print(f"🧹 从 Git 控制中移除: {path}")
+        result = subprocess.run(["git", "rm", "--cached", "-r", path], capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"❌ 失败: {path}")
+            print(result.stderr)
+        else:
+            print(f"✅ 成功标记移除: {path}")
+
+    subprocess.run(["git", "commit", "-m", "🔥 remove files from GitHub only"], check=False)
+    subprocess.run(["git", "push"], check=True)
+    print("🚀 推送完成，GitHub 上对应文件已删除（本地文件仍保留）")
+
+
 # def open_render_deploy_page():
 #     print("🌐 打开 Render 部署页面 ...")
 #     url = f"https://render.com/deploy?repo=https://github.com/{GITHUB_USERNAME}/{REPO_NAME}"
@@ -96,7 +117,8 @@ if __name__ == "__main__":
     initialize_git()
     # create_repo_if_not_exists(token)
     # fix_scripts_dir_only()
-    push_to_github()
+    remove_from_github_only(".idea")
+    # push_to_github()
 
     # open_render_page()
     # open_render_deploy_page()
