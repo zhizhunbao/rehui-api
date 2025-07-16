@@ -188,7 +188,7 @@ def main():
     create_repo_if_not_exists(token)
     push_to_github()
     open_render_page()
-    clean_git_history_and_protect_env()
+    # clean_git_history_and_protect_env()
 
 if __name__ == "__main__":
     main()
