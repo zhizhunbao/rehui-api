@@ -50,14 +50,14 @@ def get_top_rank():
     return {"top": ["Car A", "Car B", "Car C"]}
 ''')
 
-    (project_dir / "scripts" / "start_render.py").write_text('''\
+    (project_dir / "start_render.py").write_text('''\
 import uvicorn
 
 if __name__ == "__main__":
     uvicorn.run("api.main_weapp_api:app", host="0.0.0.0", port=8000)
 ''')
 
-    (project_dir / "scripts" / "start.sh").write_text('''\
+    (project_dir / "start.sh").write_text('''\
 #!/usr/bin/env bash
 uvicorn api.main_weapp_api:app --host 0.0.0.0 --port 8000
 ''')
@@ -87,6 +87,7 @@ config/.env
 .venv/
 .idea/
 scripts/setup_env_and_deps.py
+db/postgres_tools
 ''')
 
     print("✅ 项目结构已创建。")
