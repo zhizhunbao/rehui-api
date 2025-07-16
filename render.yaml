@@ -2,7 +2,7 @@ services:
   - type: web
     name: rehui-api
     env: python
-    buildCommand: ""
+    buildCommand: pip install -r requirements.txt
     startCommand: python start_render.sh
     plan: free
     branch: main
