@@ -60,32 +60,6 @@ def open_render_page():
     webbrowser.open("https://dashboard.render.com/new/web")
     print("✅ 完成！点击仓库一键部署 rehui-api 即可 🎉")
 
-
-import shutil
-from pathlib import Path
-import subprocess
-
-def fix_scripts_dir_only():
-    scripts_path = Path("scripts")
-
-    if scripts_path.exists():
-        print("🧹 尝试从 Git 中移除 scripts 子模块（如果存在） ...")
-        subprocess.run(["git", "submodule", "deinit", "-f", "scripts"], check=False)
-        subprocess.run(["git", "rm", "-f", "scripts"], check=False)
-        subprocess.run(["rm", "-rf", ".git/modules/scripts"], shell=True)  # 子模块注册目录
-
-        try:
-            print("🧹 强制删除 scripts 目录 ...")
-            shutil.rmtree(scripts_path, ignore_errors=True)
-        except Exception as e:
-            print(f"⚠️ 删除失败：{e}")
-
-    # 重建 scripts 空目录
-    print("📁 创建新的 scripts 目录 ...")
-    scripts_path.mkdir(exist_ok=True)
-
-    print("✅ scripts 目录已完成重建")
-
 import subprocess
 
 def remove_from_github_only(paths):
@@ -116,7 +90,6 @@ if __name__ == "__main__":
 
     initialize_git()
     # create_repo_if_not_exists(token)
-    # fix_scripts_dir_only()
     remove_from_github_only([".idea"])
     # push_to_github()
 
