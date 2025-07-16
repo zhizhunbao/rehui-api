@@ -74,7 +74,7 @@ services:
     name: rehui-api
     env: python
     buildCommand: ""
-    startCommand: bash start.sh
+    startCommand: bash scripts/start.sh
     plan: free
     branch: main
     autoDeploy: true
