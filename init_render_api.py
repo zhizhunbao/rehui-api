@@ -83,7 +83,7 @@ services:
     (project_dir / ".gitignore").write_text('''\
 __pycache__/
 *.pyc
-config/.env
+.env
 .venv/
 .idea/
 scripts/setup_env_and_deps.py
