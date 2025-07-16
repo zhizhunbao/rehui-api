@@ -14,17 +14,16 @@ class RankService(BaseService):
         params = {}
 
         if city:
-            conditions.append("city = :city")
+            conditions.append("city = %(city)s")
             params["city"] = city
         if make:
-            conditions.append("make = :make")
+            conditions.append("make = %(make)s")
             params["make"] = make
 
         where_clause = " AND ".join(conditions)
         if not where_clause:
             where_clause = "1=1"
 
-        # ✅ 关键点：LIMIT 必须拼接（PostgreSQL 不支持参数绑定的 LIMIT）
         sql = f"""
             SELECT listing_id, title, make, model, trim, year, city, rehui_score
             FROM dws_rehui_rank_cargurus

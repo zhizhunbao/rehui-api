@@ -24,3 +24,38 @@ LINE 4: ...RE 1=1                ORDER BY rehui_score DESC LIMIT :limit
 [14:41:28] INFO | base_service.py | _init_engine | 🔌 初始化数据库连接 ...
 [14:41:36] INFO | rank_service.py | get_top_rank | [be340b433c97] 📊 查询榜单 city=None, make=None, limit=10
 [14:41:38] INFO | rank_service.py | get_top_rank | [be340b433c97] ✅ 查询成功，返回 10 条
+[15:04:15] INFO | rank_service.py | get_top_rank | [3b9bbc738db9] 📊 查询榜单 city=Ottawa, make=honda, limit=5
+[15:04:15] ERROR | db_utils.py | run_query_df | ❌ 查询失败: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+LINE 4:             WHERE city = :city AND make = :make
+                                 ^
+
+[SQL: 
+            SELECT listing_id, title, make, model, trim, year, city, rehui_score
+            FROM dws_rehui_rank_cargurus
+            WHERE city = :city AND make = :make
+            ORDER BY rehui_score DESC
+            LIMIT 5
+        ]
+[parameters: {'city': 'Ottawa', 'make': 'honda'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[15:04:15] INFO | rank_service.py | get_top_rank | [3b9bbc738db9] ✅ 查询成功，返回 0 条
+[15:06:00] INFO | rank_service.py | get_top_rank | [95b48db38714] 📊 查询榜单 city=Ottawa, make=honda, limit=5
+[15:06:00] ERROR | db_utils.py | run_query_df | ❌ 查询失败: (psycopg2.errors.SyntaxError) syntax error at or near ":"
+LINE 4:             WHERE city = :city AND make = :make
+                                 ^
+
+[SQL: 
+            SELECT listing_id, title, make, model, trim, year, city, rehui_score
+            FROM dws_rehui_rank_cargurus
+            WHERE city = :city AND make = :make
+            ORDER BY rehui_score DESC
+            LIMIT 5
+        ]
+[parameters: {'city': 'Ottawa', 'make': 'honda'}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[15:06:00] INFO | rank_service.py | get_top_rank | [95b48db38714] ✅ 查询成功，返回 0 条
+[15:10:40] INFO | base_service.py | _init_engine | 🔌 初始化数据库连接 ...
+[15:10:40] INFO | base_service.py | _init_engine | 🔌 初始化数据库连接 ...
+[15:10:41] INFO | base_service.py | _init_engine | 🔌 初始化数据库连接 ...
+[15:10:52] INFO | rank_service.py | get_top_rank | [420cb76e77c1] 📊 查询榜单 city=Ottawa, make=honda, limit=5
+[15:10:55] INFO | rank_service.py | get_top_rank | [420cb76e77c1] ✅ 查询成功，返回 5 条
