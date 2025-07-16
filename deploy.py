@@ -90,8 +90,8 @@ if __name__ == "__main__":
 
     initialize_git()
     # create_repo_if_not_exists(token)
-    remove_from_github_only([".idea"])
-    # push_to_github()
+    # remove_from_github_only([".idea"])
+    push_to_github()
 
     # open_render_page()
     # open_render_deploy_page()
