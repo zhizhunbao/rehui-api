@@ -219,12 +219,20 @@ def clean_git_history_remove_db_safely():
         print("❌ git-filter-repo 执行失败，请确保已安装：pip install git-filter-repo")
         sys.exit(1)
 
-    # ✅ 4. 还原本地 db/ 文件夹
+    # ✅ 4. 还原干净的 db/
     if backup_dir.exists():
-        print("♻️ 正在还原本地 db/ 文件夹 ...")
-        shutil.move(str(backup_dir), str(target_dir))
-    else:
-        print("⚠️ 未找到备份目录 db_backup/，跳过还原")
+        print("♻️ 还原 db/ 中非敏感内容 ...")
+        target_dir.mkdir(exist_ok=True)
+        for item in backup_dir.iterdir():
+            dest = target_dir / item.name
+            if item.is_dir():
+                shutil.copytree(item, dest)
+            else:
+                shutil.copy2(item, dest)
+
+        # ✅ 删除临时备份
+        shutil.rmtree(backup_dir)
+        print("🧹 已删除临时备份目录 db_backup/")
 
     # ✅ 5. 提交并强推
     subprocess.run(["git", "add", ".gitignore"])
