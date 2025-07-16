@@ -179,6 +179,51 @@ def clean_git_history_and_protect_env():
     subprocess.run(["git", "push", "-f", "origin", "main"])
     print("✅ 历史清理完成并强制推送成功")
 
+def clean_git_history_remove_db_safely():
+    target_dir = Path("db")
+    backup_dir = Path("db_backup")
+
+    # ✅ 1. 备份本地 db/ 目录
+    if target_dir.exists():
+        print("📦 备份本地 db/ → db_backup/")
+        if backup_dir.exists():
+            shutil.rmtree(backup_dir)
+        shutil.copytree(target_dir, backup_dir)
+    else:
+        print("⚠️ 未发现 db/ 目录，无需备份")
+
+    # ✅ 2. 删除 Git 历史记录中相关元数据
+    for sub in ["refs/original", "logs"]:
+        meta = Path(".git") / sub
+        if meta.exists():
+            print(f"🗑️ 删除 Git 元数据：{meta}")
+            shutil.rmtree(meta)
+
+    # ✅ 3. 使用 git-filter-repo 永久删除历史中的 db/
+    result = subprocess.run([
+        "git", "filter-repo",
+        "--path", "db",
+        "--invert-paths",
+        "--force"
+    ])
+    if result.returncode != 0:
+        print("❌ git-filter-repo 执行失败，请确保已安装：pip install git-filter-repo")
+        sys.exit(1)
+
+    # ✅ 4. 还原本地 db/ 文件夹
+    if backup_dir.exists():
+        print("♻️ 正在还原本地 db/ 文件夹 ...")
+        shutil.move(str(backup_dir), str(target_dir))
+    else:
+        print("⚠️ 未找到备份目录 db_backup/，跳过还原")
+
+    # ✅ 5. 提交并强推
+    subprocess.run(["git", "add", ".gitignore"])
+    subprocess.run(["git", "commit", "-m", "🔒 清除历史 db 目录并添加忽略"])
+    subprocess.run(["git", "push", "-f", "origin", "main"])
+    print("✅ Git 历史清理成功并推送完成")
+
+
 def main():
     project_dir = Path(".")
     install_dependencies()
@@ -189,6 +234,7 @@ def main():
     push_to_github()
     # open_render_page()
     # clean_git_history_and_protect_env()
+    clean_git_history_remove_db_safely()
 
 if __name__ == "__main__":
     main()
