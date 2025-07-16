@@ -179,68 +179,6 @@ def clean_git_history_and_protect_env():
     subprocess.run(["git", "push", "-f", "origin", "main"])
     print("✅ 历史清理完成并强制推送成功")
 
-def clean_git_history_remove_db_safely():
-    target_dir = Path("db")
-    backup_dir = Path("db_backup")
-    exclude_subdirs = ["postgres_tools"]  # ✅ 忽略不备份的子目录
-
-    # ✅ 1. 只备份需要的文件和子目录
-    if target_dir.exists():
-        print("📦 备份 db/ → db_backup/（排除 postgres_tools）")
-        if backup_dir.exists():
-            shutil.rmtree(backup_dir)
-        backup_dir.mkdir(parents=True)
-        for item in target_dir.iterdir():
-            if item.name in exclude_subdirs:
-                continue
-            dest = backup_dir / item.name
-            if item.is_dir():
-                shutil.copytree(item, dest)
-            else:
-                shutil.copy2(item, dest)
-    else:
-        print("⚠️ 未发现 db/ 目录，无需备份")
-
-    # ✅ 2. 删除 Git 历史记录中相关元数据
-    for sub in ["refs/original", "logs"]:
-        meta = Path(".git") / sub
-        if meta.exists():
-            print(f"🗑️ 删除 Git 元数据：{meta}")
-            shutil.rmtree(meta)
-
-    # ✅ 3. 使用 git-filter-repo 永久删除历史中的 db/
-    result = subprocess.run([
-        "git", "filter-repo",
-        "--path", "db",
-        "--invert-paths",
-        "--force"
-    ])
-    if result.returncode != 0:
-        print("❌ git-filter-repo 执行失败，请确保已安装：pip install git-filter-repo")
-        sys.exit(1)
-
-    # ✅ 4. 还原干净的 db/
-    if backup_dir.exists():
-        print("♻️ 还原 db/ 中非敏感内容 ...")
-        target_dir.mkdir(exist_ok=True)
-        for item in backup_dir.iterdir():
-            dest = target_dir / item.name
-            if item.is_dir():
-                shutil.copytree(item, dest)
-            else:
-                shutil.copy2(item, dest)
-
-        # ✅ 删除临时备份
-        shutil.rmtree(backup_dir)
-        print("🧹 已删除临时备份目录 db_backup/")
-
-    # ✅ 5. 提交并强推
-    subprocess.run(["git", "add", ".gitignore"])
-    subprocess.run(["git", "commit", "-m", "🔒 清除历史 db 目录并添加忽略"])
-    subprocess.run(["git", "push", "-f", "origin", "main"])
-    print("✅ Git 历史清理成功并推送完成")
-
-
 def main():
     project_dir = Path(".")
     install_dependencies()
@@ -251,7 +189,6 @@ def main():
     push_to_github()
     # open_render_page()
     # clean_git_history_and_protect_env()
-    clean_git_history_remove_db_safely()
 
 if __name__ == "__main__":
     main()
