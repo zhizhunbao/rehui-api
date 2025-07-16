@@ -24,3 +24,7 @@ def get_top_rank(
         make: str = Query(None)
 ):
     return rank_service.get_top_rank(limit=limit, city=city, make=make)
+
+@app.get("/")
+def default_top10():
+    return rank_service.get_top_rank(limit=10, city=None, make=None)
