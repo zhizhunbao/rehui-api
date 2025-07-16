@@ -66,9 +66,9 @@ services:
 __pycache__/
 *.pyc
 .env
+.idea/
 .venv/
 .idea/
-scripts/setup_env_and_deps.py
 db/
 ''')
 
